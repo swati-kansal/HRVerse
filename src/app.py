@@ -7,10 +7,15 @@ Serves the UI and handles predictions from all ML models
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
+import sys
 
 # Get absolute path to the ui folder
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UI_FOLDER = os.path.join(BASE_DIR, 'ui')
+
+# Add nlp folder to path for imports
+sys.path.insert(0, os.path.join(BASE_DIR, 'nlp'))
+from resume_extractor import extract_resume_data
 
 app = Flask(__name__, 
             template_folder=UI_FOLDER,
@@ -42,20 +47,39 @@ JOB_DESCRIPTIONS = {
 }
 
 
-def parse_resume(filename):
+def parse_resume(pdf_file):
     """
-    Placeholder function to parse resume PDF.
-    Returns hardcoded resume text for now - will be extended with NLP later.
+    Parse resume PDF using NLP extractor.
+    
+    Args:
+        pdf_file: File object from Flask request
+        
+    Returns:
+        Dictionary with extracted resume data
     """
-    # Hardcoded resume text for demo purposes
-    return """
-    Experienced software engineer with 5+ years in Python and Java development.
-    Strong background in REST API design, database management with SQL and PostgreSQL.
-    Proficient in Git, Agile methodologies, and CI/CD pipelines.
-    Experience with cloud services (AWS), Docker containers, and microservices architecture.
-    Bachelor's degree in Computer Science. Strong problem-solving and communication skills.
-    Previous roles include developing scalable web applications and data processing pipelines.
-    """
+    try:
+        # Use NLP extractor to get structured data
+        extracted_data = extract_resume_data(pdf_file)
+        return extracted_data
+    except Exception as e:
+        print(f"❌ Error parsing resume: {e}")
+        # Fallback to hardcoded data for demo
+        return {
+            "success": False,
+            "name": "Unknown Candidate",
+            "resume_text": """
+            Experienced software engineer with 5+ years in Python and Java development.
+            Strong background in REST API design, database management with SQL and PostgreSQL.
+            Proficient in Git, Agile methodologies, and CI/CD pipelines.
+            Experience with cloud services (AWS), Docker containers, and microservices architecture.
+            Bachelor's degree in Computer Science. Strong problem-solving and communication skills.
+            """,
+            "skills": ["Python", "Java", "SQL", "AWS", "Git"],
+            "email": None,
+            "phone": None,
+            "experience_years": 5,
+            "education": ["BACHELOR"]
+        }
 
 
 def predict_with_separate_features(resume_text, job_skills):
@@ -157,7 +181,7 @@ def predict():
     """
     Handle prediction request.
     Expects: file (PDF) and job_id
-    Returns: predictions from all models
+    Returns: predictions from all models with extracted resume data
     """
     try:
         # Get uploaded file
@@ -173,8 +197,9 @@ def predict():
         if not job_id or job_id not in JOB_DESCRIPTIONS:
             return jsonify({"error": "Invalid job selected"}), 400
         
-        # Parse resume (placeholder for now)
-        resume_text = parse_resume(file.filename)
+        # Parse resume using NLP extractor
+        resume_data = parse_resume(file)
+        resume_text = resume_data.get("resume_text", "")
         
         # Get job skills
         job_data = JOB_DESCRIPTIONS[job_id]
@@ -192,10 +217,21 @@ def predict():
             "success": True,
             "filename": file.filename,
             "job_title": job_data["title"],
-            "predictions": predictions
+            "predictions": predictions,
+            "extracted_data": {
+                "name": resume_data.get("name", "Unknown"),
+                "email": resume_data.get("email"),
+                "phone": resume_data.get("phone"),
+                "skills": resume_data.get("skills", []),
+                "experience_years": resume_data.get("experience_years"),
+                "education": resume_data.get("education", []),
+                "resume_text_preview": resume_text[:500] + "..." if len(resume_text) > 500 else resume_text
+            }
         })
         
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 

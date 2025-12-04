@@ -255,8 +255,31 @@
                 </div>
             </div>
             
+            <!-- Extracted Data -->
+            <div id="extractedDataSection" class="mb-4" style="display: none;">
+                <h3 class="results-title">
+                    <i class="bi bi-person-badge"></i> Extracted Resume Data
+                </h3>
+                <div class="extracted-data-card p-3" style="background: #f8f9fa; border-radius: 10px;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> <span id="extractedName">-</span></p>
+                            <p><strong>Email:</strong> <span id="extractedEmail">-</span></p>
+                            <p><strong>Phone:</strong> <span id="extractedPhone">-</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Experience:</strong> <span id="extractedExp">-</span></p>
+                            <p><strong>Education:</strong> <span id="extractedEdu">-</span></p>
+                        </div>
+                    </div>
+                    <p><strong>Skills:</strong> <span id="extractedSkills">-</span></p>
+                </div>
+            </div>
+            
             <!-- Match Results -->
-            <h3 class="results-title">Match / Non-Match</h3>
+            <h3 class="results-title">
+                <i class="bi bi-check2-circle"></i> Match / Non-Match
+            </h3>
             <div id="resultsContainer">
                 <!-- Results will be populated here -->
             </div>
@@ -378,6 +401,18 @@
             // Update selected info
             selectedFile.textContent = data.filename;
             selectedJob.textContent = data.job_title;
+
+            // Display extracted data if available
+            if (data.extracted_data) {
+                const ext = data.extracted_data;
+                document.getElementById('extractedName').textContent = ext.name || '-';
+                document.getElementById('extractedEmail').textContent = ext.email || '-';
+                document.getElementById('extractedPhone').textContent = ext.phone || '-';
+                document.getElementById('extractedExp').textContent = ext.experience_years ? `${ext.experience_years} years` : '-';
+                document.getElementById('extractedEdu').textContent = ext.education?.join(', ') || '-';
+                document.getElementById('extractedSkills').textContent = ext.skills?.slice(0, 10).join(', ') || '-';
+                document.getElementById('extractedDataSection').style.display = 'block';
+            }
 
             // Build results HTML
             let resultsHTML = '';

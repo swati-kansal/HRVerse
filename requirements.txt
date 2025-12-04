@@ -50,6 +50,7 @@ sqlite-utils==3.36.0  # Manage SQLite database easily
 fastapi==0.115.0      # Backend API framework
 uvicorn==0.30.6       # Run FastAPI server
 flask==3.0.3          # Alternative lightweight API framework
+flask-cors==4.0.0     # CORS support for Flask
 
 # ==================================
 # Frontend Helpers

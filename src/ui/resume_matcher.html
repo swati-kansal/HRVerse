@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Matcher - AI Hiring Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style/style.css">
+    <style>
+        /* Resume Matcher Specific Styles */
+        .matcher-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #89CFF0 0%, #7EC8E3 50%, #6BB3D9 100%);
+            padding: 40px 20px;
+        }
+        
+        .matcher-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .matcher-title {
+            color: #1E255C;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #1E255C;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .upload-area:hover {
+            border-color: #E31B5F;
+            background: #fff;
+        }
+        
+        .upload-area.has-file {
+            border-style: solid;
+            border-color: #28a745;
+            background: #e8f5e9;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #1E255C;
+            margin-bottom: 10px;
+        }
+        
+        .job-select {
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #1E255C;
+            border-radius: 10px;
+            background: #fff;
+            width: 100%;
+        }
+        
+        .job-select:focus {
+            border-color: #E31B5F;
+            box-shadow: 0 0 0 3px rgba(227, 27, 95, 0.2);
+        }
+        
+        .predict-btn {
+            background: linear-gradient(135deg, #8FD9A8 0%, #6BCB77 100%);
+            border: none;
+            border-radius: 15px;
+            padding: 20px 60px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(107, 203, 119, 0.4);
+        }
+        
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 203, 119, 0.5);
+        }
+        
+        .predict-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Results Screen */
+        .results-section {
+            display: none;
+        }
+        
+        .selected-info {
+            background: #fff;
+            border: 2px solid #1E255C;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .results-title {
+            color: #1E255C;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 30px 0 20px;
+        }
+        
+        .result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        
+        .model-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .result-badge {
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .result-badge.match {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+        
+        .result-badge.non-match {
+            background: #e0e0e0;
+            color: #424242;
+        }
+        
+        .back-btn {
+            background: #1E255C;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #151b45;
+        }
+        
+        .confidence-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-left: 10px;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #E31B5F;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="matcher-container">
+        <!-- Screen 1: Upload and Select -->
+        <div id="screen1" class="matcher-card">
+            <h1 class="matcher-title">
+                <i class="bi bi-file-earmark-person"></i> Resume Matcher
+            </h1>
+            
+            <div class="row g-4 mb-5">
+                <!-- Upload Resume -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold mb-2">Upload Resume</label>
+                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('resumeFile').click()">
+                        <i class="bi bi-cloud-upload upload-icon"></i>
+                        <p class="mb-0" id="uploadText">Click to upload PDF</p>
+                        <small class="text-muted">or drag and drop</small>
+                    </div>
+                    <input type="file" id="resumeFile" accept=".pdf" hidden>
+                </div>
+                
+                <!-- Select Job -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold mb-2">Select Job Title</label>
+                    <select class="job-select" id="jobSelect">
+                        <option value="">-- Select Job Title --</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Predict Button -->
+            <div class="text-center">
+                <button class="predict-btn" id="predictBtn" disabled>
+                    <i class="bi bi-magic"></i> Predict Job Match
+                </button>
+                <div class="spinner" id="spinner"></div>
+            </div>
+        </div>
+        
+        <!-- Screen 2: Results -->
+        <div id="screen2" class="matcher-card results-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <button class="back-btn" id="backBtn">
+                    <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <h2 class="mb-0" style="color: #1E255C;">
+                    <i class="bi bi-graph-up"></i> Results
+                </h2>
+            </div>
+            
+            <!-- Selected File and Job -->
+            <div class="d-flex gap-3 flex-wrap mb-4">
+                <div class="selected-info">
+                    <i class="bi bi-file-pdf text-danger"></i>
+                    <span id="selectedFile">resume.pdf</span>
+                </div>
+                <div class="selected-info">
+                    <i class="bi bi-briefcase"></i>
+                    <span id="selectedJob">Software Engineer</span>
+                </div>
+            </div>
+            
+            <!-- Match Results -->
+            <h3 class="results-title">Match / Non-Match</h3>
+            <div id="resultsContainer">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Elements
+        const screen1 = document.getElementById('screen1');
+        const screen2 = document.getElementById('screen2');
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadText = document.getElementById('uploadText');
+        const resumeFile = document.getElementById('resumeFile');
+        const jobSelect = document.getElementById('jobSelect');
+        const predictBtn = document.getElementById('predictBtn');
+        const backBtn = document.getElementById('backBtn');
+        const spinner = document.getElementById('spinner');
+        const selectedFile = document.getElementById('selectedFile');
+        const selectedJob = document.getElementById('selectedJob');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        // State
+        let uploadedFile = null;
+
+        // Load jobs on page load
+        document.addEventListener('DOMContentLoaded', loadJobs);
+
+        async function loadJobs() {
+            try {
+                const response = await fetch('/api/jobs');
+                const jobs = await response.json();
+                
+                jobs.forEach(job => {
+                    const option = document.createElement('option');
+                    option.value = job.id;
+                    option.textContent = job.title;
+                    jobSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+            }
+        }
+
+        // File upload handling
+        resumeFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                uploadedFile = file;
+                uploadArea.classList.add('has-file');
+                uploadText.innerHTML = `<i class="bi bi-check-circle text-success"></i> ${file.name}`;
+                checkFormValidity();
+            }
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#E31B5F';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = uploadedFile ? '#28a745' : '#1E255C';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                uploadedFile = file;
+                uploadArea.classList.add('has-file');
+                uploadText.innerHTML = `<i class="bi bi-check-circle text-success"></i> ${file.name}`;
+                checkFormValidity();
+            }
+        });
+
+        // Job selection
+        jobSelect.addEventListener('change', checkFormValidity);
+
+        function checkFormValidity() {
+            predictBtn.disabled = !(uploadedFile && jobSelect.value);
+        }
+
+        // Predict button click
+        predictBtn.addEventListener('click', async () => {
+            if (!uploadedFile || !jobSelect.value) return;
+
+            // Show loading
+            predictBtn.disabled = true;
+            spinner.style.display = 'block';
+
+            try {
+                const formData = new FormData();
+                formData.append('resume', uploadedFile);
+                formData.append('job_id', jobSelect.value);
+
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showResults(data);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error making prediction. Please try again.');
+            } finally {
+                spinner.style.display = 'none';
+                predictBtn.disabled = false;
+            }
+        });
+
+        function showResults(data) {
+            // Update selected info
+            selectedFile.textContent = data.filename;
+            selectedJob.textContent = data.job_title;
+
+            // Build results HTML
+            let resultsHTML = '';
+            data.predictions.forEach(pred => {
+                const badgeClass = pred.prediction === 'Match' ? 'match' : 'non-match';
+                resultsHTML += `
+                    <div class="result-row">
+                        <span class="model-name">${pred.model}</span>
+                        <div>
+                            <span class="result-badge ${badgeClass}">${pred.prediction}</span>
+                            <span class="confidence-text">${pred.confidence}%</span>
+                        </div>
+                    </div>
+                `;
+            });
+            resultsContainer.innerHTML = resultsHTML;
+
+            // Switch screens
+            screen1.style.display = 'none';
+            screen2.style.display = 'block';
+        }
+
+        // Back button
+        backBtn.addEventListener('click', () => {
+            screen2.style.display = 'none';
+            screen1.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

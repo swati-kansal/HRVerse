@@ -1,0 +1,151 @@
+/* =========================
+   Brand Colors & Variables
+   ========================= */
+:root {
+  --primary-color: #1E255C;   /* Deep Navy */
+  --accent-color: #E31B5F;    /* Pink CTA */
+  --light-bg: #f8f9fa;        /* Light Gray */
+  --text-dark: #333;
+  --text-light: #fff;
+  --shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* =========================
+   Global Styles
+   ========================= */
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background-color: #fff;
+  color: var(--text-dark);
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+/* =========================
+   Navbar
+   ========================= */
+.navbar {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+.navbar-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-color) !important;
+}
+
+.navbar .nav-link {
+  font-size: 15px;
+  color: var(--primary-color) !important;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar .nav-link:hover {
+  color: var(--accent-color) !important;
+}
+
+.navbar .btn {
+  border-radius: 6px;
+}
+
+/* =========================
+   Sidebar
+   ========================= */
+.sidebar {
+  background: var(--light-bg);
+  border-right: 1px solid #ddd;
+  min-height: 100vh;
+}
+
+.sidebar h5 {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.sidebar .nav-link {
+  color: var(--text-dark);
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar .nav-link:hover {
+  background: var(--accent-color);
+  color: var(--text-light);
+}
+
+/* =========================
+   Content Area
+   ========================= */
+main {
+  background: #fff;
+  padding: 20px;
+}
+
+.content-card, .card {
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border: none;
+  background: #fff;
+}
+
+.content-card h3, 
+.content-card h2 {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* =========================
+   Tables
+   ========================= */
+.table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.table thead {
+  background: var(--primary-color);
+  color: var(--text-light);
+}
+
+.table tbody tr:hover {
+  background: rgba(227, 27, 95, 0.05); /* light pink hover */
+}
+
+/* =========================
+   Buttons
+   ========================= */
+.btn-primary {
+  background: var(--primary-color);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #151b45;
+}
+
+.btn-accent {
+  background: var(--accent-color);
+  border: none;
+  color: var(--text-light);
+}
+
+.btn-accent:hover {
+  background: #c0144d;
+}
+
+/* =========================
+   Utilities
+   ========================= */
+.shadow-sm {
+  box-shadow: var(--shadow) !important;
+}
+
+.fw-semibold {
+  font-weight: 600;
+}

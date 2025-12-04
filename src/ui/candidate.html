@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidate Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm px-4">
+    <a class="navbar-brand fw-bold" href="#"><span style="color:#1E255C;">AI Hiring Portal</span></a>
+    <div class="collapse navbar-collapse justify-content-center">
+      <ul class="navbar-nav gap-4">
+        <li class="nav-item"><a class="nav-link fw-semibold text-dark" href="#">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link fw-semibold text-dark" href="#" onclick="showJobs()">Jobs</a></li>
+        <li class="nav-item"><a class="nav-link fw-semibold text-dark" href="#" onclick="showApplications()">My Applications</a></li>
+      </ul>
+    </div>
+    <div class="d-flex align-items-center">
+      <span id="welcomeText" class="me-3 fw-semibold text-dark"></span>
+      <button onclick="logout()" class="btn btn-sm fw-bold text-white px-3" style="background:#E31B5F;">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Page Layout -->
+  <div class="container p-4">
+    <!-- Dashboard Section -->
+    <div id="dashboardSection">
+      <h3 class="mb-4 text-primary fw-bold">My Application Status</h3>
+      <div class="card shadow-lg p-4 content-card">
+        <h5 id="jobTitle" class="fw-bold text-dark mb-3"></h5>
+        <p><strong>Status:</strong> <span id="jobStatus"></span></p>
+        <p><strong>Next Step:</strong> <span id="nextStep"></span></p>
+      </div>
+    </div>
+
+    <!-- Jobs Section -->
+    <div id="jobsSection" style="display:none;">
+      <h3 class="mb-4 text-primary fw-bold">Available Jobs</h3>
+      <div class="row" id="jobList"></div>
+    </div>
+
+    <!-- Applications Section -->
+    <div id="applicationsSection" style="display:none;">
+      <h3 class="mb-4 text-primary fw-bold">My Applications</h3>
+      <ul class="list-group" id="applicationsList"></ul>
+    </div>
+  </div>
+
+  <script src="js/candidate.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

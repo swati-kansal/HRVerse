@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recruiter Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+  <!-- Navbar (inlined, no fetch needed) -->
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm px-4">
+    <a class="navbar-brand fw-bold" href="#">
+      <span style="color:#1E255C;">AI Hiring Portal</span>
+    </a>
+
+    <!-- Collapse button for mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Centered Menu -->
+    <div class="collapse navbar-collapse justify-content-center" id="navMenu">
+      
+    </div>
+
+    <!-- Right Side -->
+    <div class="d-flex align-items-center">
+      <span id="welcomeText" class="me-3 fw-semibold text-dark"></span>
+      <button onclick="logout()" class="btn btn-sm fw-bold text-white px-3" style="background:#E31B5F;">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <!-- Page Layout -->
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <aside class="col-md-2 sidebar p-3 vh-100 shadow-sm">
+        <h5 class="sidebar-title">Recruiter Menu</h5>
+        <ul class="nav flex-column mt-3">
+          <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Candidates</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="col-md-10 p-4">
+        <h3 class="mb-4 text-primary fw-bold">Candidate Results</h3>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered align-middle shadow-sm">
+            <thead class="table-dark">
+              <tr>
+                <th>Candidate</th>
+                <th>Baseline Score</th>
+                <th>Advanced Score</th>
+                <th>Status</th>
+                <th>Missing Skills</th>
+              </tr>
+            </thead>
+            <tbody id="resultsTable"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="js/recruiter.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

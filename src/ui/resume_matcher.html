@@ -3,11 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Matcher - AI Hiring Portal</title>
+    <title>AI Hiring Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="style/style.css">
     <style>
+        /* Main Tabs */
+        .main-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .main-tab {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.3);
+            color: #1E255C;
+        }
+        
+        .main-tab:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .main-tab.active {
+            background: #1E255C;
+            color: white;
+            box-shadow: 0 4px 15px rgba(30, 37, 92, 0.3);
+        }
+        
+        .tab-content-panel {
+            display: none;
+        }
+        
+        .tab-content-panel.active {
+            display: block;
+        }
+        
         /* Resume Matcher Specific Styles */
         .matcher-container {
             min-height: 100vh;
@@ -192,10 +230,312 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Salary Predict Button */
+        .salary-btn {
+            background: linear-gradient(135deg, #FFD93D 0%, #F6C90E 100%);
+            border: none;
+            border-radius: 15px;
+            padding: 20px 60px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(246, 201, 14, 0.4);
+        }
+        
+        .salary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(246, 201, 14, 0.5);
+        }
+        
+        .salary-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-group-custom {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Salary Results */
+        .salary-badge {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .average-salary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .average-salary-card h3 {
+            margin: 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .average-salary-card .salary-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        /* Input Mode Toggle */
+        .input-mode-toggle {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .input-mode-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-mode-toggle label:hover {
+            border-color: #1E255C;
+        }
+        
+        .input-mode-toggle input[type="radio"]:checked + label,
+        .input-mode-toggle label.active {
+            border-color: #1E255C;
+            background: #f0f4ff;
+        }
+        
+        .input-mode-toggle input[type="radio"] {
+            display: none;
+        }
+        
+        .resume-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #1E255C;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .resume-textarea:focus {
+            outline: none;
+            border-color: #E31B5F;
+            box-shadow: 0 0 0 3px rgba(227, 27, 95, 0.2);
+        }
+        
+        .resume-textarea::placeholder {
+            color: #999;
+        }
+        
+        .input-section {
+            display: none;
+        }
+        
+        .input-section.active {
+            display: block;
+        }
+        
+        /* Job Posting Form Styles */
+        .job-form-input {
+            padding: 15px 20px;
+            font-size: 1rem;
+            border: 2px solid #1E255C;
+            border-radius: 10px;
+            background: #fff;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .job-form-input:focus {
+            outline: none;
+            border-color: #E31B5F;
+            box-shadow: 0 0 0 3px rgba(227, 27, 95, 0.2);
+        }
+        
+        .job-form-textarea {
+            padding: 15px 20px;
+            font-size: 1rem;
+            border: 2px solid #1E255C;
+            border-radius: 10px;
+            background: #fff;
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .job-form-textarea:focus {
+            outline: none;
+            border-color: #E31B5F;
+            box-shadow: 0 0 0 3px rgba(227, 27, 95, 0.2);
+        }
+        
+        .submit-job-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+            padding: 18px 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-job-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .submit-job-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .posted-jobs-list {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .posted-job-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .posted-job-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .job-option-custom {
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
     <div class="matcher-container">
+        <!-- Main Navigation Tabs -->
+        <div class="main-tabs">
+            <button class="main-tab active" id="tabResumeMatcher" onclick="switchTab('resume')">
+                <i class="bi bi-file-earmark-person"></i> Resume Matcher
+            </button>
+            <button class="main-tab" id="tabJobPosting" onclick="switchTab('job')">
+                <i class="bi bi-briefcase"></i> Job Posting
+            </button>
+        </div>
+        
+        <!-- ==================== JOB POSTING TAB ==================== -->
+        <div id="jobPostingPanel" class="tab-content-panel">
+            <div class="matcher-card">
+                <h1 class="matcher-title">
+                    <i class="bi bi-briefcase-fill"></i> Post a Job Opening
+                </h1>
+                
+                <div id="jobSuccessMessage" class="success-message">
+                    <i class="bi bi-check-circle"></i> Job opening posted successfully!
+                </div>
+                
+                <form id="jobPostingForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Job Title *</label>
+                            <input type="text" class="job-form-input" id="jobTitleInput" 
+                                placeholder="e.g., Software Engineer, Data Scientist" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">City / Location *</label>
+                            <input type="text" class="job-form-input" id="jobCityInput" 
+                                placeholder="e.g., Bangalore, Mumbai, Chennai" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Experience Required *</label>
+                            <input type="text" class="job-form-input" id="jobExperienceInput" 
+                                placeholder="e.g., 3-5 years, 5+ years, Fresher" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Industry</label>
+                            <input type="text" class="job-form-input" id="jobIndustryInput" 
+                                placeholder="e.g., IT Services, Healthcare, Finance">
+                        </div>
+                    </div>
+                    
+                    <label class="form-label fw-semibold">Required Skills *</label>
+                    <textarea class="job-form-textarea" id="jobSkillsInput" 
+                        placeholder="e.g., Python, Machine Learning, SQL, AWS, TensorFlow, Docker..." required></textarea>
+                    
+                    <div class="text-center mt-4">
+                        <button type="submit" class="submit-job-btn" id="submitJobBtn">
+                            <i class="bi bi-plus-circle"></i> Submit Job Opening
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Posted Jobs List -->
+                <div id="postedJobsList" class="posted-jobs-list" style="display: none;">
+                    <h5 class="mb-3"><i class="bi bi-list-check"></i> Posted Job Openings</h5>
+                    <div id="postedJobsContainer">
+                        <!-- Posted jobs will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==================== RESUME MATCHER TAB ==================== -->
+        <div id="resumeMatcherPanel" class="tab-content-panel active">
+        
         <!-- Screen 1: Upload and Select -->
         <div id="screen1" class="matcher-card">
             <h1 class="matcher-title">
@@ -203,31 +543,62 @@
             </h1>
             
             <div class="row g-4 mb-5">
-                <!-- Upload Resume -->
+                <!-- Resume Input -->
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold mb-2">Upload Resume</label>
-                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('resumeFile').click()">
-                        <i class="bi bi-cloud-upload upload-icon"></i>
-                        <p class="mb-0" id="uploadText">Click to upload PDF</p>
-                        <small class="text-muted">or drag and drop</small>
+                    <label class="form-label fw-semibold mb-2">Resume Input</label>
+                    
+                    <!-- Input Mode Toggle -->
+                    <div class="input-mode-toggle">
+                        <label id="uploadModeLabel" class="active" onclick="setInputMode('upload')">
+                            <i class="bi bi-file-pdf"></i> Upload PDF
+                        </label>
+                        <label id="textModeLabel" onclick="setInputMode('text')">
+                            <i class="bi bi-textarea-t"></i> Paste Text
+                        </label>
                     </div>
-                    <input type="file" id="resumeFile" accept=".pdf" hidden>
+                    
+                    <!-- PDF Upload Section -->
+                    <div id="uploadSection" class="input-section active">
+                        <div class="upload-area" id="uploadArea" onclick="document.getElementById('resumeFile').click()">
+                            <i class="bi bi-cloud-upload upload-icon"></i>
+                            <p class="mb-0" id="uploadText">Click to upload PDF</p>
+                            <small class="text-muted">or drag and drop</small>
+                        </div>
+                        <input type="file" id="resumeFile" accept=".pdf" hidden>
+                    </div>
+                    
+                    <!-- Text Input Section -->
+                    <div id="textSection" class="input-section">
+                        <textarea 
+                            class="resume-textarea" 
+                            id="resumeText" 
+                            placeholder="Paste your resume content here...
+
+Example:
+Experienced software engineer with 5+ years in Python and Java development. Strong background in REST API design, database management with SQL and PostgreSQL. Bachelor's degree in Computer Science..."
+                        ></textarea>
+                    </div>
                 </div>
                 
                 <!-- Select Job -->
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold mb-2">Select Job Title</label>
+                    <label class="form-label fw-semibold mb-2">Job Opening</label>
                     <select class="job-select" id="jobSelect">
-                        <option value="">-- Select Job Title --</option>
+                        <option value="">-- Select Job Opening --</option>
                     </select>
                 </div>
             </div>
             
-            <!-- Predict Button -->
+            <!-- Predict Buttons -->
             <div class="text-center">
-                <button class="predict-btn" id="predictBtn" disabled>
-                    <i class="bi bi-magic"></i> Predict Job Match
-                </button>
+                <div class="btn-group-custom">
+                    <button class="predict-btn" id="predictBtn" disabled>
+                        <i class="bi bi-magic"></i> Predict Job Match
+                    </button>
+                    <button class="salary-btn" id="salaryBtn" disabled>
+                        <i class="bi bi-currency-dollar"></i> Predict Salary
+                    </button>
+                </div>
                 <div class="spinner" id="spinner"></div>
             </div>
         </div>
@@ -284,45 +655,277 @@
                 <!-- Results will be populated here -->
             </div>
         </div>
-    </div>
+        
+        <!-- Screen 3: Salary Results -->
+        <div id="screen3" class="matcher-card results-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <button class="back-btn" id="backBtn2">
+                    <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <h2 class="mb-0" style="color: #1E255C;">
+                    <i class="bi bi-currency-dollar"></i> Salary Prediction
+                </h2>
+            </div>
+            
+            <!-- Selected File and Job -->
+            <div class="d-flex gap-3 flex-wrap mb-4">
+                <div class="selected-info">
+                    <i class="bi bi-file-pdf text-danger"></i>
+                    <span id="selectedFile2">resume.pdf</span>
+                </div>
+                <div class="selected-info">
+                    <i class="bi bi-briefcase"></i>
+                    <span id="selectedJob2">Software Engineer</span>
+                </div>
+            </div>
+            
+            <!-- Average Salary -->
+            <div class="average-salary-card">
+                <h3>Estimated Average Salary</h3>
+                <div class="salary-amount" id="avgSalary">$0</div>
+                <small>Based on 4 prediction models</small>
+            </div>
+            
+            <!-- Extracted Data for Salary -->
+            <div id="extractedDataSection2" class="mb-4" style="display: none;">
+                <h3 class="results-title">
+                    <i class="bi bi-person-badge"></i> Extracted Resume Data
+                </h3>
+                <div class="extracted-data-card p-3" style="background: #f8f9fa; border-radius: 10px;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> <span id="extractedName2">-</span></p>
+                            <p><strong>Experience:</strong> <span id="extractedExp2">-</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Education:</strong> <span id="extractedEdu2">-</span></p>
+                            <p><strong>Skills Count:</strong> <span id="extractedSkillsCount">-</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Salary Predictions by Model -->
+            <h3 class="results-title">
+                <i class="bi bi-bar-chart"></i> Predictions by Model
+            </h3>
+            <div id="salaryResultsContainer">
+                <!-- Salary results will be populated here -->
+            </div>
+        </div>
+        
+        </div><!-- End resumeMatcherPanel -->
+    </div><!-- End matcher-container -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Elements
+        // ==================== TAB SWITCHING ====================
+        function switchTab(tab) {
+            const resumePanel = document.getElementById('resumeMatcherPanel');
+            const jobPanel = document.getElementById('jobPostingPanel');
+            const tabResume = document.getElementById('tabResumeMatcher');
+            const tabJob = document.getElementById('tabJobPosting');
+            
+            if (tab === 'resume') {
+                resumePanel.classList.add('active');
+                jobPanel.classList.remove('active');
+                tabResume.classList.add('active');
+                tabJob.classList.remove('active');
+            } else {
+                resumePanel.classList.remove('active');
+                jobPanel.classList.add('active');
+                tabResume.classList.remove('active');
+                tabJob.classList.add('active');
+            }
+        }
+        
+        // ==================== ELEMENTS ====================
+        // Elements - Screen 1
         const screen1 = document.getElementById('screen1');
         const screen2 = document.getElementById('screen2');
+        const screen3 = document.getElementById('screen3');
         const uploadArea = document.getElementById('uploadArea');
         const uploadText = document.getElementById('uploadText');
         const resumeFile = document.getElementById('resumeFile');
         const jobSelect = document.getElementById('jobSelect');
         const predictBtn = document.getElementById('predictBtn');
+        const salaryBtn = document.getElementById('salaryBtn');
         const backBtn = document.getElementById('backBtn');
+        const backBtn2 = document.getElementById('backBtn2');
         const spinner = document.getElementById('spinner');
+        
+        // Elements - Screen 2 (Job Match)
         const selectedFile = document.getElementById('selectedFile');
         const selectedJob = document.getElementById('selectedJob');
         const resultsContainer = document.getElementById('resultsContainer');
+        
+        // Elements - Screen 3 (Salary)
+        const selectedFile2 = document.getElementById('selectedFile2');
+        const selectedJob2 = document.getElementById('selectedJob2');
+        const avgSalary = document.getElementById('avgSalary');
+        const salaryResultsContainer = document.getElementById('salaryResultsContainer');
+        
+        // Elements - Input Mode
+        const uploadSection = document.getElementById('uploadSection');
+        const textSection = document.getElementById('textSection');
+        const uploadModeLabel = document.getElementById('uploadModeLabel');
+        const textModeLabel = document.getElementById('textModeLabel');
+        const resumeTextArea = document.getElementById('resumeText');
+        
+        // Elements - Job Posting
+        const jobPostingForm = document.getElementById('jobPostingForm');
+        const jobSuccessMessage = document.getElementById('jobSuccessMessage');
+        const postedJobsList = document.getElementById('postedJobsList');
+        const postedJobsContainer = document.getElementById('postedJobsContainer');
 
         // State
         let uploadedFile = null;
+        let inputMode = 'upload'; // 'upload' or 'text'
+        let customJobs = []; // Store custom job postings
+
+        // Input Mode Toggle
+        function setInputMode(mode) {
+            inputMode = mode;
+            
+            if (mode === 'upload') {
+                uploadSection.classList.add('active');
+                textSection.classList.remove('active');
+                uploadModeLabel.classList.add('active');
+                textModeLabel.classList.remove('active');
+            } else {
+                uploadSection.classList.remove('active');
+                textSection.classList.add('active');
+                uploadModeLabel.classList.remove('active');
+                textModeLabel.classList.add('active');
+            }
+            
+            checkFormValidity();
+        }
+        
+        // Text input handling
+        resumeTextArea.addEventListener('input', checkFormValidity);
 
         // Load jobs on page load
-        document.addEventListener('DOMContentLoaded', loadJobs);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadJobs();
+            loadCustomJobs();
+        });
 
         async function loadJobs() {
-            try {
-                const response = await fetch('/api/jobs');
-                const jobs = await response.json();
-                
-                jobs.forEach(job => {
-                    const option = document.createElement('option');
-                    option.value = job.id;
-                    option.textContent = job.title;
-                    jobSelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error loading jobs:', error);
+            // Jobs are loaded from localStorage via loadCustomJobs()
+            // No hardcoded jobs anymore
+        }
+        
+        // ==================== JOB POSTING FUNCTIONS ====================
+        function loadCustomJobs() {
+            // Load from localStorage
+            const stored = localStorage.getItem('customJobs');
+            if (stored) {
+                customJobs = JSON.parse(stored);
+                renderCustomJobsInDropdown();
+                renderPostedJobsList();
             }
         }
+        
+        function saveCustomJobs() {
+            localStorage.setItem('customJobs', JSON.stringify(customJobs));
+        }
+        
+        function renderCustomJobsInDropdown() {
+            // Clear all options except the placeholder
+            jobSelect.innerHTML = '<option value="">-- Select Job Opening --</option>';
+            
+            // Add all posted jobs
+            customJobs.forEach(job => {
+                const option = document.createElement('option');
+                option.value = `custom_${job.id}`;
+                option.textContent = `${job.title} - ${job.city}`;
+                option.className = 'job-option-custom';
+                jobSelect.appendChild(option);
+            });
+        }
+        
+        function renderPostedJobsList() {
+            if (customJobs.length === 0) {
+                postedJobsList.style.display = 'none';
+                return;
+            }
+            
+            postedJobsList.style.display = 'block';
+            postedJobsContainer.innerHTML = customJobs.map(job => `
+                <div class="posted-job-item">
+                    <div>
+                        <strong>${job.title}</strong> - ${job.city}<br>
+                        <small class="text-muted">Experience: ${job.experience} | Skills: ${job.skills.slice(0, 50)}${job.skills.length > 50 ? '...' : ''}</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteJob('${job.id}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        function deleteJob(jobId) {
+            customJobs = customJobs.filter(j => j.id !== jobId);
+            saveCustomJobs();
+            renderCustomJobsInDropdown();
+            renderPostedJobsList();
+        }
+        
+        // Job posting form submission
+        jobPostingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const jobTitle = document.getElementById('jobTitleInput').value.trim();
+            const jobCity = document.getElementById('jobCityInput').value.trim();
+            const jobExperience = document.getElementById('jobExperienceInput').value.trim();
+            const jobIndustry = document.getElementById('jobIndustryInput').value.trim();
+            const jobSkills = document.getElementById('jobSkillsInput').value.trim();
+            
+            if (!jobTitle || !jobCity || !jobExperience || !jobSkills) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Create new job object
+            const newJob = {
+                id: Date.now().toString(),
+                title: jobTitle,
+                city: jobCity,
+                experience: jobExperience,
+                industry: jobIndustry || 'General',
+                skills: jobSkills,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Add to custom jobs
+            customJobs.push(newJob);
+            saveCustomJobs();
+            
+            // Update UI
+            renderCustomJobsInDropdown();
+            renderPostedJobsList();
+            
+            // Show success message
+            jobSuccessMessage.classList.add('show');
+            setTimeout(() => {
+                jobSuccessMessage.classList.remove('show');
+            }, 3000);
+            
+            // Reset form
+            jobPostingForm.reset();
+            
+            // Also save to backend
+            try {
+                await fetch('/api/jobs/custom', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newJob)
+                });
+            } catch (error) {
+                console.log('Backend save skipped (optional)');
+            }
+        });
 
         // File upload handling
         resumeFile.addEventListener('change', (e) => {
@@ -360,21 +963,41 @@
         jobSelect.addEventListener('change', checkFormValidity);
 
         function checkFormValidity() {
-            predictBtn.disabled = !(uploadedFile && jobSelect.value);
+            let hasResumeInput = false;
+            
+            if (inputMode === 'upload') {
+                hasResumeInput = uploadedFile !== null;
+            } else {
+                hasResumeInput = resumeTextArea.value.trim().length > 50; // At least 50 chars
+            }
+            
+            const isValid = hasResumeInput && jobSelect.value;
+            predictBtn.disabled = !isValid;
+            salaryBtn.disabled = !isValid;
         }
 
         // Predict button click
         predictBtn.addEventListener('click', async () => {
-            if (!uploadedFile || !jobSelect.value) return;
+            // Validate input based on mode
+            if (inputMode === 'upload' && !uploadedFile) return;
+            if (inputMode === 'text' && !resumeTextArea.value.trim()) return;
+            if (!jobSelect.value) return;
 
             // Show loading
             predictBtn.disabled = true;
+            salaryBtn.disabled = true;
             spinner.style.display = 'block';
 
             try {
                 const formData = new FormData();
-                formData.append('resume', uploadedFile);
                 formData.append('job_id', jobSelect.value);
+                formData.append('input_mode', inputMode);
+                
+                if (inputMode === 'upload') {
+                    formData.append('resume', uploadedFile);
+                } else {
+                    formData.append('resume_text', resumeTextArea.value.trim());
+                }
 
                 const response = await fetch('/api/predict', {
                     method: 'POST',
@@ -394,6 +1017,7 @@
             } finally {
                 spinner.style.display = 'none';
                 predictBtn.disabled = false;
+                salaryBtn.disabled = false;
             }
         });
 
@@ -435,11 +1059,100 @@
             screen2.style.display = 'block';
         }
 
-        // Back button
+        // Back button (Job Match)
         backBtn.addEventListener('click', () => {
             screen2.style.display = 'none';
             screen1.style.display = 'block';
         });
+        
+        // Back button (Salary)
+        backBtn2.addEventListener('click', () => {
+            screen3.style.display = 'none';
+            screen1.style.display = 'block';
+        });
+
+        // Salary Predict button click
+        salaryBtn.addEventListener('click', async () => {
+            // Validate input based on mode
+            if (inputMode === 'upload' && !uploadedFile) return;
+            if (inputMode === 'text' && !resumeTextArea.value.trim()) return;
+            if (!jobSelect.value) return;
+
+            // Show loading
+            salaryBtn.disabled = true;
+            predictBtn.disabled = true;
+            spinner.style.display = 'block';
+
+            try {
+                const formData = new FormData();
+                formData.append('job_id', jobSelect.value);
+                formData.append('input_mode', inputMode);
+                
+                if (inputMode === 'upload') {
+                    formData.append('resume', uploadedFile);
+                } else {
+                    formData.append('resume_text', resumeTextArea.value.trim());
+                }
+
+                const response = await fetch('/api/predict-salary', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSalaryResults(data);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error predicting salary. Please try again.');
+            } finally {
+                spinner.style.display = 'none';
+                salaryBtn.disabled = false;
+                predictBtn.disabled = false;
+            }
+        });
+
+        function showSalaryResults(data) {
+            // Update selected info
+            selectedFile2.textContent = data.filename;
+            selectedJob2.textContent = data.job_title;
+
+            // Display average salary
+            avgSalary.textContent = '₹' + data.average_salary.toLocaleString('en-IN');
+
+            // Display extracted data if available
+            if (data.extracted_data) {
+                const ext = data.extracted_data;
+                document.getElementById('extractedName2').textContent = ext.name || '-';
+                document.getElementById('extractedExp2').textContent = ext.experience_years ? `${ext.experience_years} years` : '-';
+                document.getElementById('extractedEdu2').textContent = ext.education?.join(', ') || '-';
+                document.getElementById('extractedSkillsCount').textContent = ext.skills?.length || '0';
+                document.getElementById('extractedDataSection2').style.display = 'block';
+            }
+
+            // Build salary results HTML
+            let resultsHTML = '';
+            data.salary_predictions.forEach(pred => {
+                resultsHTML += `
+                    <div class="result-row">
+                        <span class="model-name">${pred.model}</span>
+                        <div>
+                            <span class="salary-badge">₹${pred.predicted_salary.toLocaleString('en-IN')}</span>
+                            <span class="confidence-text">${pred.confidence}% confidence</span>
+                        </div>
+                    </div>
+                `;
+            });
+            salaryResultsContainer.innerHTML = resultsHTML;
+
+            // Switch screens
+            screen1.style.display = 'none';
+            screen3.style.display = 'block';
+        }
     </script>
 </body>
 </html>

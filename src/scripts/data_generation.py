@@ -34,7 +34,7 @@ class SyntheticDataGenerator:
             batch_size: Number of records to generate per API call
         """
         self.client = openai.OpenAI(
-            api_key="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"
+            api_key="""
         )
         self.batch_size = batch_size
         

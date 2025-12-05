@@ -31,6 +31,19 @@ except Exception as e:
     print(f"⚠️ Could not load LR models: {e}")
     print("   Using fallback prediction methods")
 
+# Import Pinecone + LLM matcher
+PINECONE_LLM_AVAILABLE = False
+try:
+    from models.pinecone_llm_matcher import (
+        predict_match_pinecone_llm,
+        search_candidates_for_job,
+        get_pinecone_status
+    )
+    PINECONE_LLM_AVAILABLE = True
+    print("✅ Pinecone + LLM matcher module loaded")
+except ImportError as e:
+    print(f"⚠️ Pinecone + LLM matcher not available: {e}")
+
 # Add nlp folder to path for imports
 sys.path.insert(0, os.path.join(BASE_DIR, 'nlp'))
 from resume_extractor import extract_resume_data
@@ -285,8 +298,8 @@ def predict_with_similarity_features(resume_text, job_skills):
 def predict_with_pinecone_llm(resume_text, job_skills):
     """
     Predict using Pinecone + LLM vector similarity.
-    This uses a semantic similarity approach based on TF-IDF cosine similarity.
-    (Actual Pinecone/LLM integration would require API keys)
+    Uses OpenAI embeddings for semantic matching.
+    Falls back to TF-IDF if API keys are not configured.
     """
     # Handle both string and list for job_skills
     if isinstance(job_skills, list):
@@ -294,7 +307,15 @@ def predict_with_pinecone_llm(resume_text, job_skills):
     else:
         job_skills_str = job_skills
     
-    # Use TF-IDF + cosine similarity as a proxy for semantic similarity
+    # Try to use real Pinecone + LLM integration
+    if PINECONE_LLM_AVAILABLE:
+        try:
+            result = predict_match_pinecone_llm(resume_text, job_skills_str)
+            return result
+        except Exception as e:
+            print(f"⚠️ Error in Pinecone+LLM prediction: {e}")
+    
+    # Fallback to TF-IDF + cosine similarity
     if LR_MODELS and 'similarity_features' in LR_MODELS:
         try:
             vectorizer = LR_MODELS['similarity_features']['vectorizer']
@@ -325,12 +346,14 @@ def predict_with_pinecone_llm(resume_text, job_skills):
             return {
                 "model": "Pinecone + LLM",
                 "prediction": "Match" if match else "Non-Match",
-                "confidence": confidence
+                "confidence": confidence,
+                "using_real_embeddings": False,
+                "fallback_reason": "Using TF-IDF fallback"
             }
         except Exception as e:
-            print(f"⚠️ Error in Pinecone+LLM prediction: {e}")
+            print(f"⚠️ Error in TF-IDF fallback: {e}")
     
-    # Fallback to heuristic
+    # Ultimate fallback to heuristic
     resume_words = set(resume_text.lower().split())
     job_words = set(job_skills_str.lower().replace(',', ' ').split())
     overlap = len(resume_words.intersection(job_words))
@@ -341,7 +364,9 @@ def predict_with_pinecone_llm(resume_text, job_skills):
     return {
         "model": "Pinecone + LLM",
         "prediction": "Match" if match else "Non-Match",
-        "confidence": confidence
+        "confidence": confidence,
+        "using_real_embeddings": False,
+        "fallback_reason": "API keys not configured"
     }
 
 
@@ -943,6 +968,73 @@ def get_model_accuracy():
                 'metrics': logistic_regression_metrics
             }
         })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/pinecone/status', methods=['GET'])
+def pinecone_status():
+    """
+    Get the current status of Pinecone + LLM integration.
+    Returns connection status, index info, and configuration details.
+    """
+    try:
+        if PINECONE_LLM_AVAILABLE:
+            status = get_pinecone_status()
+            return jsonify({
+                'success': True,
+                'module_available': True,
+                **status
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'module_available': False,
+                'connected': False,
+                'message': 'Pinecone + LLM module not loaded'
+            })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/pinecone/search-candidates', methods=['POST'])
+def search_candidates():
+    """
+    Search for top matching candidates using Pinecone vector similarity.
+    
+    Expects JSON body:
+    {
+        "job_title": "Software Engineer",
+        "job_skills": "Python, Java, AWS",
+        "top_k": 5  (optional, default 5)
+    }
+    """
+    try:
+        if not PINECONE_LLM_AVAILABLE:
+            return jsonify({
+                'success': False,
+                'error': 'Pinecone + LLM module not available'
+            }), 400
+        
+        data = request.get_json()
+        job_title = data.get('job_title', '')
+        job_skills = data.get('job_skills', '')
+        top_k = data.get('top_k', 5)
+        
+        if not job_title or not job_skills:
+            return jsonify({
+                'success': False,
+                'error': 'job_title and job_skills are required'
+            }), 400
+        
+        results = search_candidates_for_job(job_title, job_skills, top_k)
+        return jsonify(results)
         
     except Exception as e:
         import traceback

@@ -1,22 +1,23 @@
 # ==================================
 # Core Python Utilities
 # ==================================
-numpy==1.26.4         # Numerical operations
-pandas==2.2.2         # Data handling & preprocessing
-scipy==1.13.1         # Scientific computations
+numpy>=1.26.4         # Numerical operations
+pandas>=2.2.2         # Data handling & preprocessing
+scipy>=1.13.1         # Scientific computations
 
 # ==================================
 # Machine Learning (Classroom Models)
 # ==================================
-scikit-learn==1.5.1   # Logistic Regression, Decision Tree, Naïve Bayes, K-Means
+scikit-learn>=1.5.1   # Logistic Regression, Decision Tree, Naïve Bayes, K-Means
 joblib>=1.3.0         # Model serialization
 datasets>=2.0.0       # Hugging Face datasets
+imbalanced-learn>=0.12.0  # SMOTE, Undersampling, Oversampling for bias mitigation
 
 # ==================================
 # Natural Language Processing (NLP)
 # ==================================
 nltk==3.9             # Tokenization, stopwords, stemming
-spacy==3.7.4          # Named Entity Recognition (skills, education, companies)
+spacy>=3.8.0          # Named Entity Recognition (skills, education, companies)
 
 # ==================================
 # AI & Embeddings
@@ -35,9 +36,9 @@ docx2txt==0.8         # Alternative text extraction from DOCX
 # ==================================
 # Advanced Models (External / Improved)
 # ==================================
-sentence-transformers==3.0.1  # BERT embeddings for JD–Resume matching
-transformers==4.44.0          # HuggingFace library for NLP models
-torch==2.4.1                  # Backend for BERT (PyTorch)
+sentence-transformers>=3.0.1  # BERT embeddings for JD–Resume matching
+transformers>=4.44.0          # HuggingFace library for NLP models
+torch>=2.6.0                  # Backend for BERT (PyTorch)
 
 # ==================================
 # Database

@@ -460,6 +460,84 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Model Accuracy Metrics Styles */
+        .metrics-table {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .metrics-table thead {
+            background: linear-gradient(135deg, #1E255C 0%, #2a3270 100%);
+        }
+        
+        .metrics-table th {
+            font-weight: 600;
+            padding: 15px 12px;
+            white-space: nowrap;
+        }
+        
+        .metrics-table td {
+            padding: 12px;
+            vertical-align: middle;
+        }
+        
+        .metrics-panel {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .metric-good {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .metric-medium {
+            color: #ffc107;
+            font-weight: 600;
+        }
+        
+        .metric-bad {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .technique-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .model-desc-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .model-desc-card h5 {
+            color: #1E255C;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .model-desc-card p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .alert-info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e1f5fe 100%);
+            border: none;
+            border-radius: 10px;
+            color: #1565c0;
+        }
     </style>
 </head>
 <body>
@@ -471,6 +549,9 @@
             </button>
             <button class="main-tab" id="tabJobPosting" onclick="switchTab('job')">
                 <i class="bi bi-briefcase"></i> Job Posting
+            </button>
+            <button class="main-tab" id="tabModelAccuracy" onclick="switchTab('accuracy')">
+                <i class="bi bi-graph-up-arrow"></i> Model Accuracy Matrices
             </button>
         </div>
         
@@ -529,6 +610,111 @@
                     <div id="postedJobsContainer">
                         <!-- Posted jobs will appear here -->
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==================== MODEL ACCURACY MATRICES TAB ==================== -->
+        <div id="modelAccuracyPanel" class="tab-content-panel">
+            <div class="matcher-card">
+                <h1 class="matcher-title">
+                    <i class="bi bi-graph-up-arrow"></i> Model Accuracy Matrices
+                </h1>
+                
+                <!-- Model Type Selector -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Select Model Type</label>
+                    <select class="job-select" id="modelTypeSelect" onchange="loadAccuracyMetrics()">
+                        <option value="linear">Linear Regression (Salary Prediction)</option>
+                        <option value="logistic">Logistic Regression (Resume Matching)</option>
+                    </select>
+                </div>
+                
+                <!-- Model Description -->
+                <div id="modelDescription" class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle"></i>
+                    <span id="modelDescText">Accuracy metrics for different bias mitigation techniques in salary prediction</span>
+                </div>
+                
+                <!-- Linear Regression Metrics -->
+                <div id="linearMetricsPanel" class="metrics-panel">
+                    <h3 class="results-title">
+                        <i class="bi bi-bar-chart-line"></i> Linear Regression Metrics
+                    </h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover metrics-table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Technique</th>
+                                    <th>R² Score</th>
+                                    <th>RMSE</th>
+                                    <th>MAE</th>
+                                    <th>MAPE (%)</th>
+                                    <th>Gender MAE Gap</th>
+                                    <th>College MAE Gap</th>
+                                </tr>
+                            </thead>
+                            <tbody id="linearMetricsBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Detailed Breakdown -->
+                    <h4 class="mt-4 mb-3"><i class="bi bi-gender-ambiguous"></i> MAE by Gender</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Technique</th>
+                                    <th>Male MAE</th>
+                                    <th>Female MAE</th>
+                                    <th>Other MAE</th>
+                                </tr>
+                            </thead>
+                            <tbody id="genderMetricsBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Logistic Regression Metrics -->
+                <div id="logisticMetricsPanel" class="metrics-panel" style="display: none;">
+                    <h3 class="results-title">
+                        <i class="bi bi-check2-square"></i> Logistic Regression Metrics
+                    </h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover metrics-table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Technique</th>
+                                    <th>Accuracy</th>
+                                    <th>Precision</th>
+                                    <th>Recall</th>
+                                    <th>F1 Score</th>
+                                    <th>AUC-ROC</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logisticMetricsBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Model Descriptions -->
+                    <h4 class="mt-4 mb-3"><i class="bi bi-info-square"></i> Model Descriptions</h4>
+                    <div id="modelDescriptions" class="row">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Loading Spinner -->
+                <div id="metricsSpinner" class="text-center" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Loading metrics...</p>
                 </div>
             </div>
         </div>
@@ -723,19 +909,29 @@ Experienced software engineer with 5+ years in Python and Java development. Stro
         function switchTab(tab) {
             const resumePanel = document.getElementById('resumeMatcherPanel');
             const jobPanel = document.getElementById('jobPostingPanel');
+            const accuracyPanel = document.getElementById('modelAccuracyPanel');
             const tabResume = document.getElementById('tabResumeMatcher');
             const tabJob = document.getElementById('tabJobPosting');
+            const tabAccuracy = document.getElementById('tabModelAccuracy');
+            
+            // Hide all panels and deactivate all tabs
+            resumePanel.classList.remove('active');
+            jobPanel.classList.remove('active');
+            accuracyPanel.classList.remove('active');
+            tabResume.classList.remove('active');
+            tabJob.classList.remove('active');
+            tabAccuracy.classList.remove('active');
             
             if (tab === 'resume') {
                 resumePanel.classList.add('active');
-                jobPanel.classList.remove('active');
                 tabResume.classList.add('active');
-                tabJob.classList.remove('active');
-            } else {
-                resumePanel.classList.remove('active');
+            } else if (tab === 'job') {
                 jobPanel.classList.add('active');
-                tabResume.classList.remove('active');
                 tabJob.classList.add('active');
+            } else if (tab === 'accuracy') {
+                accuracyPanel.classList.add('active');
+                tabAccuracy.classList.add('active');
+                loadAccuracyMetrics(); // Load metrics when tab is opened
             }
         }
         
@@ -1152,6 +1348,146 @@ Experienced software engineer with 5+ years in Python and Java development. Stro
             // Switch screens
             screen1.style.display = 'none';
             screen3.style.display = 'block';
+        }
+        
+        // ==================== MODEL ACCURACY FUNCTIONS ====================
+        let cachedMetrics = null;
+        
+        async function loadAccuracyMetrics() {
+            const modelType = document.getElementById('modelTypeSelect').value;
+            const linearPanel = document.getElementById('linearMetricsPanel');
+            const logisticPanel = document.getElementById('logisticMetricsPanel');
+            const spinner = document.getElementById('metricsSpinner');
+            const descText = document.getElementById('modelDescText');
+            
+            // Show/hide panels based on selection
+            if (modelType === 'linear') {
+                linearPanel.style.display = 'block';
+                logisticPanel.style.display = 'none';
+                descText.textContent = 'Accuracy metrics for different bias mitigation techniques in salary prediction';
+            } else {
+                linearPanel.style.display = 'none';
+                logisticPanel.style.display = 'block';
+                descText.textContent = 'Classification metrics for different resume matching approaches';
+            }
+            
+            // Use cached data if available
+            if (cachedMetrics) {
+                renderMetrics(cachedMetrics, modelType);
+                return;
+            }
+            
+            // Show spinner
+            spinner.style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/model-accuracy');
+                const data = await response.json();
+                
+                if (data.success) {
+                    cachedMetrics = data;
+                    renderMetrics(data, modelType);
+                } else {
+                    console.error('Failed to load metrics:', data.error);
+                }
+            } catch (error) {
+                console.error('Error loading metrics:', error);
+            } finally {
+                spinner.style.display = 'none';
+            }
+        }
+        
+        function renderMetrics(data, modelType) {
+            if (modelType === 'linear') {
+                renderLinearMetrics(data.linear_regression.metrics);
+            } else {
+                renderLogisticMetrics(data.logistic_regression.metrics);
+            }
+        }
+        
+        function renderLinearMetrics(metrics) {
+            const tbody = document.getElementById('linearMetricsBody');
+            const genderTbody = document.getElementById('genderMetricsBody');
+            
+            // Main metrics table
+            tbody.innerHTML = metrics.map(m => `
+                <tr>
+                    <td><span class="technique-badge">${m.technique}</span></td>
+                    <td class="${getR2Class(m.r2)}">${(m.r2 * 100).toFixed(1)}%</td>
+                    <td>₹${formatNumber(m.rmse)}</td>
+                    <td>₹${formatNumber(m.mae)}</td>
+                    <td class="${getMapeClass(m.mape)}">${m.mape.toFixed(1)}%</td>
+                    <td class="${getGapClass(m.gender_mae_gap)}">₹${formatNumber(Math.abs(m.gender_mae_gap))}</td>
+                    <td class="${getGapClass(m.college_mae_gap)}">₹${formatNumber(Math.abs(m.college_mae_gap))}</td>
+                </tr>
+            `).join('');
+            
+            // Gender breakdown table
+            genderTbody.innerHTML = metrics.map(m => `
+                <tr>
+                    <td><strong>${m.technique}</strong></td>
+                    <td>₹${formatNumber(m.mae_male)}</td>
+                    <td>₹${formatNumber(m.mae_female)}</td>
+                    <td>₹${formatNumber(m.mae_other)}</td>
+                </tr>
+            `).join('');
+        }
+        
+        function renderLogisticMetrics(metrics) {
+            const tbody = document.getElementById('logisticMetricsBody');
+            const descContainer = document.getElementById('modelDescriptions');
+            
+            // Main metrics table
+            tbody.innerHTML = metrics.map(m => `
+                <tr>
+                    <td><span class="technique-badge">${m.technique}</span></td>
+                    <td class="${getAccuracyClass(m.accuracy)}">${(m.accuracy * 100).toFixed(1)}%</td>
+                    <td class="${getAccuracyClass(m.precision)}">${(m.precision * 100).toFixed(1)}%</td>
+                    <td class="${getAccuracyClass(m.recall)}">${(m.recall * 100).toFixed(1)}%</td>
+                    <td class="${getAccuracyClass(m.f1_score)}">${(m.f1_score * 100).toFixed(1)}%</td>
+                    <td class="${getAccuracyClass(m.auc_roc)}">${(m.auc_roc * 100).toFixed(1)}%</td>
+                </tr>
+            `).join('');
+            
+            // Model descriptions
+            descContainer.innerHTML = metrics.map(m => `
+                <div class="col-md-6">
+                    <div class="model-desc-card">
+                        <h5><i class="bi bi-cpu"></i> ${m.technique}</h5>
+                        <p>${m.description}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Helper functions for metric coloring
+        function getR2Class(value) {
+            if (value >= 0.7) return 'metric-good';
+            if (value >= 0.5) return 'metric-medium';
+            return 'metric-bad';
+        }
+        
+        function getMapeClass(value) {
+            if (value <= 15) return 'metric-good';
+            if (value <= 25) return 'metric-medium';
+            return 'metric-bad';
+        }
+        
+        function getGapClass(value) {
+            const absValue = Math.abs(value);
+            if (absValue <= 10000) return 'metric-good';
+            if (absValue <= 30000) return 'metric-medium';
+            return 'metric-bad';
+        }
+        
+        function getAccuracyClass(value) {
+            if (value >= 0.85) return 'metric-good';
+            if (value >= 0.70) return 'metric-medium';
+            return 'metric-bad';
+        }
+        
+        function formatNumber(num) {
+            return Math.round(num).toLocaleString('en-IN');
         }
     </script>
 </body>

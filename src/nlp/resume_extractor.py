@@ -152,6 +152,10 @@ class ResumeExtractor:
             r'(\d+)\+?\s*years?\s*(?:of\s*)?experience',
             r'experience\s*(?:of\s*)?(\d+)\+?\s*years?',
             r'(\d+)\+?\s*years?\s*(?:in\s*)?(?:the\s*)?(?:industry|field)',
+            r'(\d+)\+?\s*years?\s*(?:in|of|working)',  # Added: "5+ years in Python"
+            r'(\d+)\+?\s*years?\s*(?:as\s*a?\s*)?(?:developer|engineer|designer|manager)',  # Added: "5 years as developer"
+            r'(?:over|more\s*than)\s*(\d+)\+?\s*years?',  # Added: "over 5 years"
+            r'(\d+)\+?\s*yrs?\b',  # Added: "5+ yrs" or "5 yr"
         ]
         
         for pattern in patterns:

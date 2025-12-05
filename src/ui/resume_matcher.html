@@ -1189,6 +1189,16 @@ Experienced software engineer with 5+ years in Python and Java development. Stro
                 formData.append('job_id', jobSelect.value);
                 formData.append('input_mode', inputMode);
                 
+                // For custom jobs, send the job skills from localStorage
+                if (jobSelect.value.startsWith('custom_')) {
+                    const customId = jobSelect.value.replace('custom_', '');
+                    const customJob = customJobs.find(j => j.id === customId);
+                    if (customJob) {
+                        formData.append('job_skills', customJob.skills);
+                        formData.append('job_title', customJob.title + ' - ' + customJob.city);
+                    }
+                }
+                
                 if (inputMode === 'upload') {
                     formData.append('resume', uploadedFile);
                 } else {
@@ -1283,6 +1293,16 @@ Experienced software engineer with 5+ years in Python and Java development. Stro
                 const formData = new FormData();
                 formData.append('job_id', jobSelect.value);
                 formData.append('input_mode', inputMode);
+                
+                // For custom jobs, send the job skills from localStorage
+                if (jobSelect.value.startsWith('custom_')) {
+                    const customId = jobSelect.value.replace('custom_', '');
+                    const customJob = customJobs.find(j => j.id === customId);
+                    if (customJob) {
+                        formData.append('job_skills', customJob.skills);
+                        formData.append('job_title', customJob.title + ' - ' + customJob.city);
+                    }
+                }
                 
                 if (inputMode === 'upload') {
                     formData.append('resume', uploadedFile);
